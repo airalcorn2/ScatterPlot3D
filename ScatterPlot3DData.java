@@ -200,8 +200,7 @@ public class ScatterPlot3DData {
 
 					String[] parts = csv.nextLine().split(",");
 
-					String group;
-					group = parts[0];
+					String group = parts[0];
 
 					float[] rgb = new float[3];
 					rgb[0] = Float.parseFloat(parts[1]);
