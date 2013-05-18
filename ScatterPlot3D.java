@@ -64,7 +64,7 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 public class ScatterPlot3D extends MouseAdapter {
 
 	SimpleUniverse universe;
-	static TransformGroup objRotate;
+	TransformGroup objRotate;
 	BranchGroup sceneBranchGroup;
 	PickCanvas pickCanvas;
 	Canvas3D offScreenCanvas;
