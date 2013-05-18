@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.media.j3d.Appearance;
@@ -56,7 +57,6 @@ public class ScatterPlot3D extends MouseAdapter {
 	float sphereRadius;
 	boolean groupColPresent;
 	String[] colGroups;
-	float[][] floatColors;
 	Sphere[] spheres;
 	Color3f[] colors;
 
@@ -68,7 +68,8 @@ public class ScatterPlot3D extends MouseAdapter {
 				colorFile, groupColPresent);
 
 		N = data.N;
-		groupNum = data.groups.size();
+		if (groupColPresent)
+			groupNum = data.groups.size();
 		totalCol = data.colTotal;
 
 		this.execute();
@@ -196,8 +197,8 @@ public class ScatterPlot3D extends MouseAdapter {
 
 			} else {
 
-				col = new Color3f(floatColors[i][0], floatColors[i][1],
-						floatColors[i][2]);
+				col = new Color3f((float) Math.random(), (float) Math.random(),
+						(float) Math.random());
 
 			}
 
@@ -295,7 +296,7 @@ public class ScatterPlot3D extends MouseAdapter {
 
 	}
 
-	// For selecting data points
+	// Data point selection
 	public void mouseClicked(MouseEvent e) {
 
 		if (e.getButton() == MouseEvent.BUTTON1) {
@@ -374,8 +375,53 @@ public class ScatterPlot3D extends MouseAdapter {
 	// Search function
 	public void find(String search, int searchCol) {
 
-		int count = 0;
-		int playerIndex = -1;
+		boolean matchFound = false;
+
+		ArrayList<Integer> foundIndices = new ArrayList<Integer>();
+
+		for (int i = 0; i < N; i++) {
+
+			if (search.equals(data.data[i][searchCol])) {
+
+				matchFound = true;
+				foundIndices.add(i);
+
+			}
+		}
+
+		if (matchFound) {
+
+			fadePoints(search, searchCol);
+
+			// List details of search target
+			for (int index : foundIndices) {
+
+				for (int i = 0; i < totalCol; i++) {
+
+					ScatterPlot3DGUI.detailTextArea
+							.append(ScatterPlot3DGUI.headers[i] + ": "
+									+ data.data[index][i] + "\n");
+
+				}
+
+				// Automatically scroll text area to bottom
+				ScatterPlot3DGUI.detailTextArea.append("\n");
+				ScatterPlot3DGUI.detailTextArea
+						.setCaretPosition(ScatterPlot3DGUI.detailTextArea
+								.getDocument().getLength());
+
+			}
+
+		} else {
+
+			ScatterPlot3DGUI.detailTextArea.append("Could not find \"" + search
+					+ "\" in " + ScatterPlot3DGUI.headers[searchCol]
+					+ " column.\n\n");
+
+		}
+	}
+
+	void fadePoints(String search, int searchCol) {
 
 		for (int i = 0; i < N; i++) {
 
@@ -389,8 +435,6 @@ public class ScatterPlot3D extends MouseAdapter {
 
 			} else {
 
-				count++;
-				playerIndex = i;
 				spheres[i].getAppearance().getMaterial()
 						.setDiffuseColor(colors[i]);
 				TransparencyAttributes t_attr = new TransparencyAttributes(
@@ -399,25 +443,6 @@ public class ScatterPlot3D extends MouseAdapter {
 				spheres[i].getAppearance().setTransparencyAttributes(t_attr);
 
 			}
-		}
-
-		// List details of search target
-		if (count == 1) {
-
-			for (int i = 0; i < totalCol; i++) {
-
-				ScatterPlot3DGUI.detailTextArea
-						.append(ScatterPlot3DGUI.headers[i] + ": "
-								+ data.data[playerIndex][i] + "\n");
-
-			}
-
-			// Automatically scroll text area to bottom
-			ScatterPlot3DGUI.detailTextArea.append("\n");
-			ScatterPlot3DGUI.detailTextArea
-					.setCaretPosition(ScatterPlot3DGUI.detailTextArea
-							.getDocument().getLength());
-
 		}
 	}
 

@@ -27,7 +27,6 @@ public class Run {
 					.getLogger(ScatterPlot3DGUI.class.getName()).log(
 							java.util.logging.Level.SEVERE, null, ex);
 		}
-		// </editor-fold>
 
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
