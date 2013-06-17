@@ -68,7 +68,6 @@ public class ScatterPlot3D extends MouseAdapter {
 	BranchGroup sceneBranchGroup;
 	PickCanvas pickCanvas;
 	Canvas3D offScreenCanvas;
-	BufferedImage bufferedImage;
 	JPopupMenu saveMenu;
 	JMenuItem saveMenuItem;
 	int OFF_SCREEN_SCALE = 3;
@@ -79,7 +78,6 @@ public class ScatterPlot3D extends MouseAdapter {
 	int N, xCol, yCol, zCol, groupCol, totalCol, groupNum;
 	float sphereRadius;
 	boolean groupColPresent;
-	String[] colGroups;
 	Sphere[] spheres;
 	Color3f[] colors;
 
@@ -94,12 +92,6 @@ public class ScatterPlot3D extends MouseAdapter {
 		if (groupColPresent)
 			groupNum = data.groups.size();
 		totalCol = data.colTotal;
-
-		this.execute();
-
-	}
-
-	public void execute() {
 
 		viewpointCount = 1;
 
@@ -216,7 +208,7 @@ public class ScatterPlot3D extends MouseAdapter {
 					col = new Color3f(data.groupColors.get(group));
 				else
 					ScatterPlot3DGUI.detailTextArea
-							.append("Groups in data file do not match groups in group colors file.\n\n");
+							.append("Groups in data file do not match groups in colors file.\n\n");
 
 			} else {
 
@@ -448,7 +440,7 @@ public class ScatterPlot3D extends MouseAdapter {
 
 		for (int i = 0; i < N; i++) {
 
-			// Fades points that don't match search
+			// Fade points that don't match search
 			if (!search.equals(data.data[i][searchCol])) {
 
 				TransparencyAttributes t_attr = new TransparencyAttributes(

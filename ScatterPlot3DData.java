@@ -92,8 +92,9 @@ public class ScatterPlot3DData {
 			N = rawData.size();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+
 		}
 	}
 
@@ -104,8 +105,7 @@ public class ScatterPlot3DData {
 		for (int i = 0; i < N; i++) {
 
 			String[] thisRow = rawData.get(i).split(",");
-			for (int j = 0; j < colTotal; j++)
-				data[i][j] = thisRow[j];
+            System.arraycopy(thisRow, 0, data[i], 0, colTotal);
 
 		}
 	}
