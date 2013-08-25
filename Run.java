@@ -19,49 +19,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class Run {
 
-	public static void main(String args[]) {
+    public static void main(String args[]) {
 
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager
-					.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger
-					.getLogger(ScatterPlot3DGUI.class.getName()).log(
-							java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger
-					.getLogger(ScatterPlot3DGUI.class.getName()).log(
-							java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger
-					.getLogger(ScatterPlot3DGUI.class.getName()).log(
-							java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger
-					.getLogger(ScatterPlot3DGUI.class.getName()).log(
-							java.util.logging.Level.SEVERE, null, ex);
-		}
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager
+                    .getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger
+                    .getLogger(ScatterPlot3DGUI.class.getName()).log(
+                    java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger
+                    .getLogger(ScatterPlot3DGUI.class.getName()).log(
+                    java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger
+                    .getLogger(ScatterPlot3DGUI.class.getName()).log(
+                    java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger
+                    .getLogger(ScatterPlot3DGUI.class.getName()).log(
+                    java.util.logging.Level.SEVERE, null, ex);
+        }
 
 		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new ScatterPlot3DGUI().setVisible(true);
-			}
-		});
-	}
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ScatterPlot3DGUI().setVisible(true);
+            }
+        });
+    }
 
-	public static void createNewGUI() {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new ScatterPlot3DGUI().setVisible(true);
-			}
-		});
-	}
+    public static void createNewGUI() {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ScatterPlot3DGUI().setVisible(true);
+            }
+        });
+    }
 }

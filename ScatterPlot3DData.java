@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -27,216 +28,213 @@ import java.util.Scanner;
 
 public class ScatterPlot3DData {
 
-	int N, xCol, yCol, zCol, colTotal, groupCol;
-	boolean groupColPresent;
-	File dataFile, colorFile;
+    int N, xCol, yCol, zCol, colTotal, groupCol;
+    boolean groupColPresent;
+    File dataFile, colorFile;
+    double xMax, yMax, zMax, xMin, yMin, zMin;
+    ArrayList<String> rawData, groups;
+    String[][] data;
+    double[][] raw;
+    double[][] normal;
+    Hashtable<String, float[]> groupColors;
 
-	double xMax, yMax, zMax, xMin, yMin, zMin;
+    public ScatterPlot3DData(int xColNo, int yColNo, int zColNo,
+                             int theGroupCol, File theDataFile, File theColorFile,
+                             boolean isGroupColPresent) {
 
-	ArrayList<String> rawData, groups;
-	String[][] data;
-	double[][] raw;
-	double[][] normal;
+        xCol = xColNo;
+        yCol = yColNo;
+        zCol = zColNo;
 
-	Hashtable<String, float[]> groupColors;
+        dataFile = theDataFile;
+        colorFile = theColorFile;
 
-	public ScatterPlot3DData(int xColNo, int yColNo, int zColNo,
-			int theGroupCol, File theDataFile, File theColorFile,
-			boolean isGroupColPresent) {
+        readRawData();
+        createStringArray();
+        createDoubleArray();
+        createNormalArray();
 
-		xCol = xColNo;
-		yCol = yColNo;
-		zCol = zColNo;
+        groupColPresent = isGroupColPresent;
 
-		dataFile = theDataFile;
-		colorFile = theColorFile;
+        if (groupColPresent) {
 
-		readRawData();
-		createStringArray();
-		createDoubleArray();
-		createNormalArray();
+            groupCol = theGroupCol;
+            countGroups();
+            assignGroupColors();
 
-		groupColPresent = isGroupColPresent;
+        }
+    }
 
-		if (groupColPresent) {
+    public void readRawData() {
 
-			groupCol = theGroupCol;
-			countGroups();
-			assignGroupColors();
+        Scanner csv;
 
-		}
-	}
+        try {
 
-	public void readRawData() {
+            csv = new Scanner(dataFile);
 
-		Scanner csv;
+            // Get column headers
+            ScatterPlot3DGUI.headers = csv.nextLine().split(",");
 
-		try {
+            colTotal = ScatterPlot3DGUI.headers.length;
 
-			csv = new Scanner(dataFile);
+            // Read in data from .csv file
+            rawData = new ArrayList<String>();
+            while (csv.hasNextLine()) {
+                rawData.add(csv.nextLine());
+            }
 
-			// Get column headers
-			ScatterPlot3DGUI.headers = csv.nextLine().split(",");
+            // Sample size
+            N = rawData.size();
 
-			colTotal = ScatterPlot3DGUI.headers.length;
+        } catch (FileNotFoundException e) {
 
-			// Read in data from .csv file
-			rawData = new ArrayList<String>();
-			while (csv.hasNextLine()) {
-				rawData.add(csv.nextLine());
-			}
+            e.printStackTrace();
 
-			// Sample size
-			N = rawData.size();
+        }
+    }
 
-		} catch (FileNotFoundException e) {
+    public void createStringArray() {
 
-			e.printStackTrace();
+        data = new String[N][colTotal];
 
-		}
-	}
+        for (int i = 0; i < N; i++) {
 
-	public void createStringArray() {
-
-		data = new String[N][colTotal];
-
-		for (int i = 0; i < N; i++) {
-
-			String[] thisRow = rawData.get(i).split(",");
+            String[] thisRow = rawData.get(i).split(",");
             System.arraycopy(thisRow, 0, data[i], 0, colTotal);
 
-		}
-	}
+        }
+    }
 
-	public void createDoubleArray() {
+    public void createDoubleArray() {
 
-		xMax = Double.NEGATIVE_INFINITY;
-		yMax = Double.NEGATIVE_INFINITY;
-		zMax = Double.NEGATIVE_INFINITY;
+        xMax = Double.NEGATIVE_INFINITY;
+        yMax = Double.NEGATIVE_INFINITY;
+        zMax = Double.NEGATIVE_INFINITY;
 
-		xMin = Double.POSITIVE_INFINITY;
-		yMin = Double.POSITIVE_INFINITY;
-		zMin = Double.POSITIVE_INFINITY;
+        xMin = Double.POSITIVE_INFINITY;
+        yMin = Double.POSITIVE_INFINITY;
+        zMin = Double.POSITIVE_INFINITY;
 
-		raw = new double[N][3];
+        raw = new double[N][3];
 
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < colTotal; j++) {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < colTotal; j++) {
 
-				if (j == xCol) {
+                if (j == xCol) {
 
-					raw[i][0] = Double.parseDouble(data[i][j]);
-					xMax = Math.max(xMax, raw[i][0]);
-					xMin = Math.min(xMin, raw[i][0]);
+                    raw[i][0] = Double.parseDouble(data[i][j]);
+                    xMax = Math.max(xMax, raw[i][0]);
+                    xMin = Math.min(xMin, raw[i][0]);
 
-				} else if (j == yCol) {
+                } else if (j == yCol) {
 
-					raw[i][1] = Double.parseDouble(data[i][j]);
-					yMax = Math.max(yMax, raw[i][1]);
-					yMin = Math.min(yMin, raw[i][1]);
+                    raw[i][1] = Double.parseDouble(data[i][j]);
+                    yMax = Math.max(yMax, raw[i][1]);
+                    yMin = Math.min(yMin, raw[i][1]);
 
-				} else if (j == zCol) {
+                } else if (j == zCol) {
 
-					raw[i][2] = Double.parseDouble(data[i][j]);
-					zMax = Math.max(zMax, raw[i][2]);
-					zMin = Math.min(zMin, raw[i][2]);
+                    raw[i][2] = Double.parseDouble(data[i][j]);
+                    zMax = Math.max(zMax, raw[i][2]);
+                    zMin = Math.min(zMin, raw[i][2]);
 
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	public void createNormalArray() {
+    public void createNormalArray() {
 
-		normal = new double[N][3];
+        normal = new double[N][3];
 
-		double xRange = xMax - xMin;
-		double yRange = yMax - yMin;
-		double zRange = zMax - zMin;
+        double xRange = xMax - xMin;
+        double yRange = yMax - yMin;
+        double zRange = zMax - zMin;
 
-		for (int i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++) {
 
-			double min = 1;
-			double range = 1;
+            double min = 1;
+            double range = 1;
 
-			for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
 
-				switch (j) {
+                switch (j) {
 
-				case 0:
-					min = xMin;
-					range = xRange;
-					break;
+                    case 0:
+                        min = xMin;
+                        range = xRange;
+                        break;
 
-				case 1:
-					min = yMin;
-					range = yRange;
-					break;
+                    case 1:
+                        min = yMin;
+                        range = yRange;
+                        break;
 
-				case 2:
-					min = zMin;
-					range = zRange;
-					break;
-				}
+                    case 2:
+                        min = zMin;
+                        range = zRange;
+                        break;
+                }
 
-				normal[i][j] = (2 * (raw[i][j] - min) / range) - 1;
+                normal[i][j] = (2 * (raw[i][j] - min) / range) - 1;
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	public void countGroups() {
+    public void countGroups() {
 
-		groups = new ArrayList<String>();
+        groups = new ArrayList<String>();
 
-		for (int i = 0; i < N; i++)
-			if (!groups.contains(data[i][groupCol]))
-				groups.add(data[i][groupCol]);
+        for (int i = 0; i < N; i++)
+            if (!groups.contains(data[i][groupCol]))
+                groups.add(data[i][groupCol]);
 
-	}
+    }
 
-	public void assignGroupColors() {
+    public void assignGroupColors() {
 
-		groupColors = new Hashtable<String, float[]>();
+        groupColors = new Hashtable<String, float[]>();
 
-		if (colorFile == null) {
+        if (colorFile == null) {
 
-			for (String group : groups) {
+            for (String group : groups) {
 
-				float[] floatColors = { (float) Math.random(),
-						(float) Math.random(), (float) Math.random() };
-				groupColors.put(group, floatColors);
+                float[] floatColors = {(float) Math.random(),
+                        (float) Math.random(), (float) Math.random()};
+                groupColors.put(group, floatColors);
 
-			}
+            }
 
-		} else {
+        } else {
 
-			Scanner csv;
+            Scanner csv;
 
-			try {
+            try {
 
-				csv = new Scanner(colorFile);
+                csv = new Scanner(colorFile);
 
-				for (int i = 0; i < groups.size(); i++) {
+                for (int i = 0; i < groups.size(); i++) {
 
-					String[] parts = csv.nextLine().split(",");
+                    String[] parts = csv.nextLine().split(",");
 
-					String group = parts[0];
+                    String group = parts[0];
 
-					float[] rgb = new float[3];
-					rgb[0] = Float.parseFloat(parts[1]);
-					rgb[1] = Float.parseFloat(parts[2]);
-					rgb[2] = Float.parseFloat(parts[3]);
+                    float[] rgb = new float[3];
+                    rgb[0] = Float.parseFloat(parts[1]);
+                    rgb[1] = Float.parseFloat(parts[2]);
+                    rgb[2] = Float.parseFloat(parts[3]);
 
-					groupColors.put(group, rgb);
+                    groupColors.put(group, rgb);
 
-				}
+                }
 
-			} catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
 
-				e.printStackTrace();
+                e.printStackTrace();
 
-			}
-		}
-	}
+            }
+        }
+    }
 }
