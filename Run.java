@@ -57,12 +57,4 @@ public class Run {
             }
         });
     }
-
-    public static void createNewGUI() {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ScatterPlot3DGUI().setVisible(true);
-            }
-        });
-    }
 }

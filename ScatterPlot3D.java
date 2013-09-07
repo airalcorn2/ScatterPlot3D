@@ -368,37 +368,246 @@ public class ScatterPlot3D extends MouseAdapter {
         }
     }
 
-    // Search function
-    public void find(String search, int searchCol) {
+    ArrayList<Integer> multiGroupSearch(String search, int searchCol) {
 
-        boolean matchFound = false;
+        search = search.replace("{", "");
+        search = search.replace("}", "");
+
+        String[] groups = search.split(",");
 
         ArrayList<Integer> foundIndices = new ArrayList<Integer>();
+
+        for (int i = 0; i < N; i++)
+            for (String group : groups)
+                if (group.equals(data.data[i][searchCol])) {
+
+                    foundIndices.add(i);
+                    break;
+
+                }
+
+        if (foundIndices.isEmpty())
+            ScatterPlot3DGUI.detailTextArea.append("Could not find \"" + search
+                    + "\" in " + ScatterPlot3DGUI.headers[searchCol]
+                    + " column.\n\n");
+
+        return foundIndices;
+
+    }
+
+    void multiGroupSearch(String search, int searchCol, boolean[] indices) {
+
+        boolean found = false;
+
+        search = search.replace("{", "");
+        search = search.replace("}", "");
+
+        String[] groups = search.split(",");
+
+        for (int i = 0; i < N; i++) {
+
+            if (!indices[i]) continue;
+
+            boolean isFound = false;
+
+            for (String group : groups)
+                if (group.equals(data.data[i][searchCol])) {
+
+                    found = true;
+                    isFound = true;
+                    break;
+
+                }
+
+            indices[i] = isFound;
+        }
+
+
+        if (!found)
+            ScatterPlot3DGUI.detailTextArea.append("Could not find \"" + search
+                    + "\" in " + ScatterPlot3DGUI.headers[searchCol]
+                    + " column that also meets other search criteria.\n\n");
+
+    }
+
+    ArrayList<Integer> numberRangeSearch(String search, int searchCol) {
+
+        search = search.replace("[", "");
+        search = search.replace("]", "");
+
+        String[] numberRanges = search.split(",");
+
+        ArrayList<Integer> foundIndices = new ArrayList<Integer>();
+
+        for (int i = 0; i < N; i++)
+            for (String numberRange : numberRanges) {
+
+                String[] numbers = numberRange.split("-");
+
+                double low = Double.parseDouble(numbers[0]);
+                double high = Double.parseDouble(numbers[1]);
+
+                if (high < low) {
+
+                    double temp = low;
+                    low = high;
+                    high = temp;
+
+                }
+
+                try {
+
+                    if (Double.parseDouble(data.data[i][searchCol]) >= low
+                            && Double.parseDouble(data.data[i][searchCol]) <= high) {
+
+                        foundIndices.add(i);
+                        break;
+
+                    }
+
+                } catch (NumberFormatException notNum) {
+
+                    ScatterPlot3DGUI.detailTextArea.append(ScatterPlot3DGUI.headers[searchCol]
+                            + " column contains non-numbers.\n\n");
+                    return foundIndices;
+
+                }
+            }
+
+        if (foundIndices.isEmpty())
+            ScatterPlot3DGUI.detailTextArea.append("Could not find \"" + search
+                    + "\" in " + ScatterPlot3DGUI.headers[searchCol]
+                    + " column.\n\n");
+
+        return foundIndices;
+
+    }
+
+    void numberRangeSearch(String search, int searchCol, boolean[] indices) {
+
+        boolean found = false;
+
+        search = search.replace("[", "");
+        search = search.replace("]", "");
+
+        String[] numberRanges = search.split(",");
+
+        for (int i = 0; i < N; i++) {
+
+            if (!indices[i]) continue;
+
+            boolean isFound = false;
+
+            for (String numberRange : numberRanges) {
+
+                String[] numbers = numberRange.split("-");
+
+                double low = Double.parseDouble(numbers[0]);
+                double high = Double.parseDouble(numbers[1]);
+
+                if (high < low) {
+
+                    double temp = low;
+                    low = high;
+                    high = temp;
+
+                }
+
+                try {
+
+                    if (Double.parseDouble(data.data[i][searchCol]) >= low
+                            && Double.parseDouble(data.data[i][searchCol]) <= high) {
+
+                        found = true;
+                        isFound = true;
+                        break;
+
+                    }
+
+                } catch (NumberFormatException notNum) {
+
+                    ScatterPlot3DGUI.detailTextArea.append(ScatterPlot3DGUI.headers[searchCol]
+                            + " column contains non-numbers.\n\n");
+                    return;
+
+                }
+            }
+
+            indices[i] = isFound;
+
+        }
+
+        if (!found)
+            ScatterPlot3DGUI.detailTextArea.append("Could not find \"" + search
+                    + "\" in " + ScatterPlot3DGUI.headers[searchCol]
+                    + " column that also meets other search criteria.\n\n");
+
+    }
+
+    ArrayList<Integer> standardSearch(String search, int searchCol) {
+
+        ArrayList<Integer> foundIndices = new ArrayList<Integer>();
+
+        for (int i = 0; i < N; i++)
+            if (search.equals(data.data[i][searchCol]))
+                foundIndices.add(i);
+
+        if (foundIndices.isEmpty())
+            ScatterPlot3DGUI.detailTextArea.append("Could not find \"" + search
+                    + "\" in " + ScatterPlot3DGUI.headers[searchCol]
+                    + " column.\n\n");
+
+        return foundIndices;
+
+    }
+
+    void standardSearch(String search, int searchCol, boolean[] indices) {
+
+        boolean found = false;
 
         for (int i = 0; i < N; i++) {
 
             if (search.equals(data.data[i][searchCol])) {
 
-                matchFound = true;
-                foundIndices.add(i);
+                found = true;
+                continue;
 
             }
+
+            indices[i] = false;
         }
 
-        if (matchFound) {
+        if (!found)
+            ScatterPlot3DGUI.detailTextArea.append("Could not find \"" + search
+                    + "\" in " + ScatterPlot3DGUI.headers[searchCol]
+                    + " column that also meets other search criteria.\n\n");
 
-            fadePoints(search, searchCol);
+        return;
+    }
+
+    // Search function
+    public void find(String search, int searchCol) {
+
+        ArrayList<Integer> foundIndices;
+
+        if (search.startsWith("{"))
+            foundIndices = multiGroupSearch(search, searchCol);
+        else if (search.startsWith("["))
+            foundIndices = numberRangeSearch(search, searchCol);
+        else
+            foundIndices = standardSearch(search, searchCol);
+
+        if (!foundIndices.isEmpty()) {
+
+            fadePoints(foundIndices);
 
             // List details of search target
             for (int index : foundIndices) {
 
-                for (int i = 0; i < totalCol; i++) {
-
+                for (int i = 0; i < totalCol; i++)
                     ScatterPlot3DGUI.detailTextArea
                             .append(ScatterPlot3DGUI.headers[i] + ": "
                                     + data.data[index][i] + "\n");
-
-                }
 
                 // Automatically scroll text area to bottom
                 ScatterPlot3DGUI.detailTextArea.append("\n");
@@ -407,22 +616,64 @@ public class ScatterPlot3D extends MouseAdapter {
                                 .getDocument().getLength());
 
             }
-
-        } else {
-
-            ScatterPlot3DGUI.detailTextArea.append("Could not find \"" + search
-                    + "\" in " + ScatterPlot3DGUI.headers[searchCol]
-                    + " column.\n\n");
-
         }
     }
 
-    void fadePoints(String search, int searchCol) {
+    // Special search function
+    public void specialFind(int numHeaders, ArrayList<JTextField> searchFields) {
+
+        boolean[] foundIndices = new boolean[N];
+        for (int i = 0; i < N; i++) foundIndices[i] = true;
+
+        for (int i = 0; i < numHeaders; i++) {
+
+            String search = searchFields.get(i).getText();
+
+            if (search.isEmpty())
+                continue;
+            else if (search.startsWith("{"))
+                multiGroupSearch(search, i, foundIndices);
+            else if (search.startsWith("["))
+                numberRangeSearch(search, i, foundIndices);
+            else
+                standardSearch(search, i, foundIndices);
+
+        }
+
+        ArrayList<Integer> theIndices = new ArrayList<Integer>();
+        for (int i = 0; i < N; i++)
+            if (foundIndices[i]) theIndices.add(i);
+
+        if (!theIndices.isEmpty()) {
+
+            fadePoints(theIndices);
+
+            // List details of search target
+            for (int index : theIndices) {
+
+                for (int i = 0; i < totalCol; i++)
+                    ScatterPlot3DGUI.detailTextArea
+                            .append(ScatterPlot3DGUI.headers[i] + ": "
+                                    + data.data[index][i] + "\n");
+
+                // Automatically scroll text area to bottom
+                ScatterPlot3DGUI.detailTextArea.append("\n");
+                ScatterPlot3DGUI.detailTextArea
+                        .setCaretPosition(ScatterPlot3DGUI.detailTextArea
+                                .getDocument().getLength());
+
+            }
+        }
+    }
+
+    void fadePoints(ArrayList<Integer> foundIndices) {
+
+        int foundIndicesPointer = 0;
 
         for (int i = 0; i < N; i++) {
 
             // Fade points that don't match search
-            if (!search.equals(data.data[i][searchCol])) {
+            if (foundIndicesPointer == foundIndices.size() || i != foundIndices.get(foundIndicesPointer)) {
 
                 TransparencyAttributes t_attr = new TransparencyAttributes(
                         TransparencyAttributes.NICEST, 0.99f);
@@ -437,6 +688,8 @@ public class ScatterPlot3D extends MouseAdapter {
                         TransparencyAttributes.NONE, 0.0f);
 
                 spheres[i].getAppearance().setTransparencyAttributes(t_attr);
+
+                foundIndicesPointer++;
 
             }
         }

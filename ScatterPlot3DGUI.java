@@ -24,9 +24,11 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 
 import javax.media.j3d.Canvas3D;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 public class ScatterPlot3DGUI extends javax.swing.JFrame {
 
@@ -37,26 +39,14 @@ public class ScatterPlot3DGUI extends javax.swing.JFrame {
     File dataFile, colorFile;
     boolean colorFileExists = false;
     ScatterPlot3D scatter;
-    private javax.swing.JButton clearButton;
+    ArrayList<JTextField> searchFields;
     private javax.swing.JComboBox<String> colSearchComboBox;
-    private javax.swing.JScrollPane detailScrollPane;
     private javax.swing.JFileChooser fileChooser;
-    private javax.swing.JLabel groupColLabel;
     private javax.swing.JTextField groupColTextField;
-    private javax.swing.JButton groupColorsButton;
-    private javax.swing.JButton openFileButton;
-    private javax.swing.JPopupMenu saveMenu;
-    private javax.swing.JMenuItem saveMenuItem;
-    private javax.swing.JButton searchButton;
     private javax.swing.JTextField searchTextField;
-    private javax.swing.JLabel sizeDataPointLabel;
     private javax.swing.JTextField sizeDataPointTextField;
-    private javax.swing.JButton submitButton;
-    private javax.swing.JLabel xColLabel;
     private javax.swing.JTextField xColTextField;
-    private javax.swing.JLabel yColLabel;
     private javax.swing.JTextField yColTextField;
-    private javax.swing.JLabel zColLabel;
     private javax.swing.JTextField zColTextField;
 
     public ScatterPlot3DGUI() {
@@ -66,31 +56,32 @@ public class ScatterPlot3DGUI extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
-        saveMenu = new javax.swing.JPopupMenu();
-        saveMenuItem = new javax.swing.JMenuItem();
+        JPopupMenu saveMenu = new JPopupMenu();
+        JMenuItem saveMenuItem = new JMenuItem();
         GraphicsConfiguration config = SimpleUniverse
                 .getPreferredConfiguration();
         plotCanvas = new Canvas3D(config);
         plotCanvas.setSize(400, 400);
         colSearchComboBox = new javax.swing.JComboBox<String>();
-        submitButton = new javax.swing.JButton();
-        clearButton = new javax.swing.JButton();
-        detailScrollPane = new javax.swing.JScrollPane();
+        JButton submitButton = new JButton();
+        JButton clearButton = new JButton();
+        JScrollPane detailScrollPane = new JScrollPane();
         detailTextArea = new javax.swing.JTextArea();
         searchTextField = new javax.swing.JTextField();
-        searchButton = new javax.swing.JButton();
-        openFileButton = new javax.swing.JButton();
-        groupColorsButton = new javax.swing.JButton();
+        JButton searchButton = new JButton();
+        JButton multiSearchButton = new JButton();
+        JButton openFileButton = new JButton();
+        JButton groupColorsButton = new JButton();
         groupColTextField = new javax.swing.JTextField();
-        sizeDataPointLabel = new javax.swing.JLabel();
+        JLabel sizeDataPointLabel = new JLabel();
         sizeDataPointTextField = new javax.swing.JTextField();
         xColTextField = new javax.swing.JTextField();
-        xColLabel = new javax.swing.JLabel();
-        yColLabel = new javax.swing.JLabel();
+        JLabel xColLabel = new JLabel();
+        JLabel yColLabel = new JLabel();
         yColTextField = new javax.swing.JTextField();
-        zColLabel = new javax.swing.JLabel();
+        JLabel zColLabel = new JLabel();
         zColTextField = new javax.swing.JTextField();
-        groupColLabel = new javax.swing.JLabel();
+        JLabel groupColLabel = new JLabel();
 
         saveMenuItem.setText("Save");
         saveMenu.add(saveMenuItem);
@@ -133,6 +124,13 @@ public class ScatterPlot3DGUI extends javax.swing.JFrame {
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchButtonActionPerformed(evt);
+            }
+        });
+
+        multiSearchButton.setText("Multi-Search");
+        multiSearchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                multiSearchButtonActionPerformed(evt);
             }
         });
 
@@ -196,6 +194,12 @@ public class ScatterPlot3DGUI extends javax.swing.JFrame {
                                                                         javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(
                                                                         searchButton))
+                                                .addComponent(
+                                                        multiSearchButton,
+                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                        0,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        Short.MAX_VALUE)
                                                 .addComponent(
                                                         colSearchComboBox,
                                                         javax.swing.GroupLayout.Alignment.TRAILING,
@@ -433,9 +437,15 @@ public class ScatterPlot3DGUI extends javax.swing.JFrame {
                                                                                         javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                 .addComponent(
-                                                                                        searchButton))))
+                                                                                        searchButton))
+                                                                .addGap(12, 12,
+                                                                        12)
+                                                                .addComponent(
+                                                                        multiSearchButton,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap()));
-
         pack();
     }
 
@@ -443,15 +453,11 @@ public class ScatterPlot3DGUI extends javax.swing.JFrame {
 
         int returnVal = fileChooser.showOpenDialog(this);
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-
+        if (returnVal == JFileChooser.APPROVE_OPTION)
             dataFile = fileChooser.getSelectedFile();
-
-        } else {
-
+        else
             System.out.println("File access cancelled by user.");
 
-        }
     }
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -525,11 +531,13 @@ public class ScatterPlot3DGUI extends javax.swing.JFrame {
         }
 
         if (run) {
+
             scatter.showPlot(colorFile);
 
             colSearchComboBox
                     .setModel(new javax.swing.DefaultComboBoxModel<String>(
                             headers));
+
         }
     }
 
@@ -599,5 +607,72 @@ public class ScatterPlot3DGUI extends javax.swing.JFrame {
 
             }
         }
+    }
+
+    private void multiSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {
+
+        JFrame frame = new JFrame();
+        frame.setTitle("Multi-Search");
+        frame.setResizable(false);
+
+        JPanel panel = new JPanel();
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        GroupLayout groupLayout = new GroupLayout(panel);
+        panel.setLayout(groupLayout);
+
+        groupLayout.setAutoCreateGaps(true);
+
+        GroupLayout.SequentialGroup hGroup = groupLayout.createSequentialGroup();
+        GroupLayout.SequentialGroup vGroup = groupLayout.createSequentialGroup();
+
+        GroupLayout.ParallelGroup labels = groupLayout.createParallelGroup();
+        GroupLayout.ParallelGroup textFields = groupLayout.createParallelGroup();
+
+        searchFields = new ArrayList<JTextField>();
+
+        for (String header : headers) {
+
+            JLabel label = new JLabel(header);
+            labels.addComponent(label);
+
+            JTextField textField = new JTextField(15);
+            textFields.addComponent(textField);
+            searchFields.add(textField);
+
+            vGroup.addGroup(groupLayout.
+                    createParallelGroup(GroupLayout.Alignment.BASELINE).
+                    addComponent(label).addComponent(textField));
+
+        }
+
+        JButton specialSearchButton = new JButton("Search");
+        specialSearchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                specialSearchButtonActionPerformed(evt);
+            }
+        });
+
+        GroupLayout.ParallelGroup allHoriz = groupLayout.createParallelGroup();
+        textFields.addComponent(specialSearchButton);
+        hGroup.addGroup(labels);
+        hGroup.addGroup(textFields);
+        allHoriz.addGroup(hGroup);
+        groupLayout.setHorizontalGroup(allHoriz);
+
+        vGroup.addComponent(specialSearchButton);
+        groupLayout.setVerticalGroup(vGroup);
+
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
+
+    }
+
+    private void specialSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {
+
+        scatter.specialFind(headers.length, searchFields);
+        return;
+
     }
 }
