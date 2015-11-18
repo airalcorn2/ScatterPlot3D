@@ -444,6 +444,13 @@ public class ScatterPlot3D extends MouseAdapter {
 
                 String[] numbers = numberRange.split("-");
 
+                if (numbers.length != 2) {
+
+                    ScatterPlot3DGUI.detailTextArea.append("One or more of the search terms was not a range of two numbers.\n\n");
+                    return foundIndices;
+
+                }
+
                 double low = Double.parseDouble(numbers[0]);
                 double high = Double.parseDouble(numbers[1]);
 
@@ -501,6 +508,13 @@ public class ScatterPlot3D extends MouseAdapter {
             for (String numberRange : numberRanges) {
 
                 String[] numbers = numberRange.split("-");
+
+                if (numbers.length != 2) {
+
+                    ScatterPlot3DGUI.detailTextArea.append("One or more of the search terms was not a range of two numbers.\n\n");
+                    return;
+
+                }
 
                 double low = Double.parseDouble(numbers[0]);
                 double high = Double.parseDouble(numbers[1]);
