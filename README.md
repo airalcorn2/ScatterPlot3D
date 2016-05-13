@@ -16,7 +16,8 @@
     Main-Class: com.simontuffs.onejar.Boot
     One-Jar-Main-Class: Run
 
-8. <code>cd root</code>
+8. <code>cd /path/to/root</code>
 
-9. <code>jar -cvfm ../one-jar.jar boot-manifest.mf .</code>
-    (Note: make sure you include the period in the above command)
+9. <code>jar -cvfm ./one-jar.jar boot-manifest.mf .</code>
+
+(Note: make sure you include the period in the above command)
