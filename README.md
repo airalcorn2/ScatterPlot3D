@@ -1,8 +1,8 @@
 # Running
 1. Download the appropriate build from [here](https://sites.google.com/site/michaelaalcorn/ScatterPlot3D).
 2. Run with <code>java -jar ScatterPlot3D-\<version\>.jar</code> on Linux systems or by double-clicking the JAR on Windows.
-3. Documentation can be downloaded [here](https://sites.google.com/site/michaelaalcorn/ScatterPlot3D/SupplementaryMaterials.zip?attredirects=0&d=1).
-4. A gallery of application screenshots can be found [here](http://imgur.com/a/U833y).
+
+Documentation can be downloaded [here](https://sites.google.com/site/michaelaalcorn/ScatterPlot3D/SupplementaryMaterials.zip?attredirects=0&d=1). A gallery of application screenshots can be found [here](http://imgur.com/a/U833y).
 
 # Building
 1. In IntelliJ: File -> Project Structure -> Artifacts -> + -> Extracted Directory -> <code>j3dcore.jar</code>; <code>j3dutils.jar</code>; <code>vecmath.jar</code>
