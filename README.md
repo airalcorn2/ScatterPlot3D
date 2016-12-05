@@ -1,5 +1,5 @@
 # Running
-1. Download the appropriate build from [here](https://sites.google.com/site/michaelaalcorn/ScatterPlot3D).
+1. Download the appropriate build from [here](https://sites.google.com/view/michaelaalcorn/projects/scatterplot3d).
 2. Run with <code>java -jar ScatterPlot3D-\<version\>.jar</code> on Linux systems or by double-clicking the JAR on Windows.
 
 Documentation can be downloaded [here](https://sites.google.com/site/michaelaalcorn/ScatterPlot3D/SupplementaryMaterials.zip?attredirects=0&d=1). A gallery of application screenshots can be found [here](http://imgur.com/a/U833y).
